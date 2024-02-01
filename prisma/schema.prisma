@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  TEACHER
+  STUDENT
+  SUPERADMIN
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String?     @unique
+  emailVerified DateTime?
+  password      String?
+  role          UserRole    @default(STUDENT)
+  image         String?
+  sections      Section[]
+  accounts      Account[]
+  worksheets    WorkSheet[]
+  progress      StudentProgress[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Grade {
+  id        String    @id @default(uuid())
+  name      String
+  sections  Section[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt()
+}
+
+model Section {
+  id        String    @id @default(uuid())
+  name      String
+  gradeId   String
+  grade     Grade     @relation(fields: [gradeId], references: [id])
+  chapters  Chapter[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt()
+  users     User[]
+
+  @@index([gradeId])
+}
+
+model WorkSheet {
+  id              String            @id @default(uuid())
+  name            String
+  chapterId       String
+  chapter         Chapter           @relation(fields: [chapterId], references: [id])
+  teacherId       String
+  teacher         User              @relation(fields: [teacherId], references: [id])
+  studentprogress StudentProgress[]
+  published       Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chapter {
+  id         String      @id @default(uuid())
+  name       String
+  sectionId  String
+  section    Section     @relation(fields: [sectionId], references: [id])
+  worksheets WorkSheet[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentProgress {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User @relation(fields: [userId],references: [id])
+  worksheetId String
+  worksheet   WorkSheet @relation(fields: [worksheetId], references: [id], onDelete: Cascade)
+  grading     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

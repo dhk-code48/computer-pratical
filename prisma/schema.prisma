@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,12 +17,12 @@ enum UserRole {
 }
 
 model User {
-  id            String      @id @default(cuid())
+  id            String            @id @default(cuid())
   name          String?
-  email         String?     @unique
+  email         String?           @unique
   emailVerified DateTime?
   password      String?
-  role          UserRole    @default(STUDENT)
+  role          UserRole          @default(STUDENT)
   image         String?
   sections      Section[]
   accounts      Account[]
@@ -78,9 +78,9 @@ model WorkSheet {
   teacherId       String
   teacher         User              @relation(fields: [teacherId], references: [id])
   studentprogress StudentProgress[]
-  published       Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  published       Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 model Chapter {
@@ -97,7 +97,7 @@ model Chapter {
 model StudentProgress {
   id          String    @id @default(uuid())
   userId      String
-  user        User @relation(fields: [userId],references: [id])
+  user        User      @relation(fields: [userId], references: [id])
   worksheetId String
   worksheet   WorkSheet @relation(fields: [worksheetId], references: [id], onDelete: Cascade)
   grading     String

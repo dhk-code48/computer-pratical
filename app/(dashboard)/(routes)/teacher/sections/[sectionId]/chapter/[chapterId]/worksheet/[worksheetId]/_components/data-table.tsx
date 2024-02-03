@@ -24,13 +24,18 @@ import {
 import StudentProgressRow from "./columns";
 
 interface DataTableProps {
-  studentsProgress: StudentProgress[];
+  studentsProgress: (StudentProgress & { user: User })[];
   worksheetId: string;
   chapterId: string;
   sectionId: string;
 }
 
-export function DataTable({ studentsProgress, chapterId, sectionId, worksheetId }: DataTableProps) {
+export function DataTable({
+  studentsProgress,
+  chapterId,
+  sectionId,
+  worksheetId,
+}: DataTableProps) {
   return (
     <div className="rounded-md border">
       <Table>

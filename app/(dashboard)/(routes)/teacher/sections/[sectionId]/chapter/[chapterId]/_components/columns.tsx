@@ -53,19 +53,14 @@ export const columns: ColumnDef<WorkSheet>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Section Id
+          Chapter Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const chapter: { id: string } = row.getValue("chapter");
-      console.log("CHAPTER", chapter);
-      return (
-        <div>
-          <h1>{"id"}</h1>
-        </div>
-      );
+      const chapter: Chapter = row.getValue("chapter");
+      return <div>{chapter.name}</div>;
     },
   },
   {

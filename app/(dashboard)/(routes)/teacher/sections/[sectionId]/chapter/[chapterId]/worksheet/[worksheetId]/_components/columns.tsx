@@ -23,7 +23,7 @@ const StudentProgressRow: React.FC<{
   worksheetId: string;
   chapterId: string;
   sectionId: string;
-  studentProgress: StudentProgress;
+  studentProgress: StudentProgress & { user: User };
 }> = ({ index, studentProgress, chapterId, sectionId, worksheetId }) => {
   const [grading, setGrading] = React.useState<string>("None");
   const [error, setError] = React.useState<string | undefined>("");

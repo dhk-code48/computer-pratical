@@ -26,17 +26,41 @@ import {
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
-import { Grade, Section, User } from "@prisma/client";
+import { Grade, Section, User, UserRole } from "@prisma/client";
 import { createTeacher } from "@/actions/createTeacher";
 import { updateTeacher } from "@/actions/updateTeacher";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   grades: { name: string; sections: Section[] }[];
   teacherId: string;
-  teacher: { id: string; name: string; password: string; email: string; sections: Section[] };
+  teacher:
+    | ({
+        sections: {
+          id: string;
+          name: string;
+          gradeId: string;
+          createdAt: Date;
+          updatedAt: Date;
+        }[];
+      } & {
+        id: string;
+        name: string | null;
+        email: string | null;
+        emailVerified: Date | null;
+        password: string | null;
+        role: UserRole;
+        image: string | null;
+      })
+    | null;
 }
 
-const TeacherForm = ({ className, grades, teacher, teacherId, ...props }: UserAuthFormProps) => {
+const TeacherForm = ({
+  className,
+  grades,
+  teacher,
+  teacherId,
+  ...props
+}: UserAuthFormProps) => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -88,7 +112,9 @@ const TeacherForm = ({ className, grades, teacher, teacherId, ...props }: UserAu
     });
   };
 
-  const [sectionOptions, setSectionOptions] = useState<{ label: string; value: string }[]>([]);
+  const [sectionOptions, setSectionOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   useEffect(() => {
     setSectionOptions([]);
@@ -150,7 +176,12 @@ const TeacherForm = ({ className, grades, teacher, teacherId, ...props }: UserAu
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="******" type="password" />
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="******"
+                      type="password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,7 +197,9 @@ const TeacherForm = ({ className, grades, teacher, teacherId, ...props }: UserAu
                     <Select
                       options={sectionOptions}
                       isMulti
-                      onChange={(e) => form.setValue("sections", [...e.map((p) => p.value)])}
+                      onChange={(e) =>
+                        form.setValue("sections", [...e.map((p) => p.value)])
+                      }
                     />
                   </FormControl>
                 </FormItem>

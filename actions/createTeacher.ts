@@ -2,6 +2,7 @@
 
 import { TeacherSchema } from "@/schemas";
 import * as z from "zod";
+import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
 export const createTeacher = async (values: z.infer<typeof TeacherSchema>) => {
@@ -13,12 +14,14 @@ export const createTeacher = async (values: z.infer<typeof TeacherSchema>) => {
 
   const { name, email, password, sections } = validatedFields.data;
 
+  const hashedPassword = await bcrypt.hash(password, 12);
+
   try {
     await db.user.create({
       data: {
         name,
         email,
-        password,
+        password: hashedPassword,
         role: "TEACHER",
         sections: {
           connect: sections.map((sectionId) => ({ id: sectionId })),

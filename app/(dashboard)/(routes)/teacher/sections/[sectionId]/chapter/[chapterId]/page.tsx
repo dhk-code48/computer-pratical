@@ -5,15 +5,19 @@ import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
 import BackButton from "@/components/back-button";
 
-const TeacherChapterPage: FC<{ params: { sectionId: string; chapterId: string } }> = async ({
-  params,
-}) => {
+const TeacherChapterPage: FC<{
+  params: { sectionId: string; chapterId: string };
+}> = async ({ params }) => {
   const chapter = await db.chapter.findUnique({
     where: {
       id: params.chapterId,
     },
     include: {
-      worksheets: true,
+      worksheets: {
+        include: {
+          chapter: true,
+        },
+      },
     },
   });
 

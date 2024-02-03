@@ -1,8 +1,10 @@
 import { WorkSheet } from "@prisma/client";
 
-export const createWorksheet = async (data: FormData): Promise<WorkSheet | null> => {
+export const createWorksheet = async (
+  data: FormData
+): Promise<WorkSheet | null> => {
   try {
-    const baseurl = "http://localhost:3000";
+    const baseurl = "http://129.150.50.164:3002";
     const apiUrl = baseurl + "/api/upload";
 
     if (!baseurl) return null;

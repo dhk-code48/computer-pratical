@@ -1,6 +1,6 @@
 "use client";
 
-import { Section } from "@prisma/client";
+import { Grade, Section } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +16,23 @@ import { startTransition } from "react";
 import { deleteSection } from "@/actions/deleteSection";
 
 export const columns: ColumnDef<Section>[] = [
+  {
+    accessorKey: "grade",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Grade <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const grade: Grade = row.getValue("grade");
+      return <div>{grade.name}</div>;
+    },
+  },
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -39,19 +56,6 @@ export const columns: ColumnDef<Section>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Section Id <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "gradeId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Grade Id <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },

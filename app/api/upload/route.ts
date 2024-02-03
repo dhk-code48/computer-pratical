@@ -12,7 +12,14 @@ export async function POST(request: NextRequest) {
     const sectionId = data.get("sectionId")?.toString();
     const published = data.get("published")?.toString();
 
-    if (!pdffile || !name || !chapterId || !teacherId || !sectionId || !published) {
+    if (
+      !pdffile ||
+      !name ||
+      !chapterId ||
+      !teacherId ||
+      !sectionId ||
+      !published
+    ) {
       return new Response(JSON.stringify({ message: "Incomplete data" }), {
         status: 400,
       });
@@ -27,7 +34,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const byteData = await pdffile.arrayBuffer();
+    const byteData = await new Response(pdffile as Blob).arrayBuffer();
     const buffer = Buffer.from(byteData);
     const path = `./public/pdf/${worksheet.id}.pdf`;
 
@@ -82,7 +89,14 @@ export async function PUT(request: NextRequest) {
     const worksheetId = data.get("worksheetId")?.toString();
     const published = data.get("published")?.toString();
 
-    if (!sectionId || !name || !chapterId || !teacherId || !worksheetId || !published) {
+    if (
+      !sectionId ||
+      !name ||
+      !chapterId ||
+      !teacherId ||
+      !worksheetId ||
+      !published
+    ) {
       return new Response(JSON.stringify({ error: "Incomplete data" }), {
         status: 400,
       });
@@ -130,7 +144,7 @@ export async function PUT(request: NextRequest) {
     });
 
     if (pdffile) {
-      const byteData = await pdffile.arrayBuffer();
+      const byteData = await new Response(pdffile as Blob).arrayBuffer();
       const buffer = Buffer.from(byteData);
       const path = `./public/pdf/${worksheet.id}.pdf`;
 
@@ -155,95 +169,3 @@ export async function PUT(request: NextRequest) {
     });
   }
 }
-
-// export async function PUT(request: NextRequest) {
-//   try {
-//     const requestBody = await request.json();
-
-//     const { updatedData, userId, worksheetId } = requestBody;
-
-//     if (!updatedData || !userId || !worksheetId) {
-//       return NextResponse.json({ error: "Invalid request data" }, { status: 400 });
-//     }
-
-//     await connectMongoDb();
-
-//     const adminUser = await UserSchema.findById(userId);
-
-//     if (!adminUser) {
-//       return NextResponse.json({ error: "User not found" }, { status: 403 });
-//     }
-
-//     if (adminUser.role === "teacher" || adminUser.role === "superadmin") {
-//       const worksheet = await WorkSheetModel.findByIdAndUpdate(
-//         worksheetId,
-//         {
-//           title: updatedData.title,
-//           state: updatedData.state,
-//           chapterId: updatedData.chapterId,
-//           description: updatedData.description,
-//           gradeId: updatedData.gradeId,
-//           sectionId: updatedData.sectionId,
-//           pdfLink: updatedData.pdfLink,
-//         },
-//         { new: true }
-//       );
-
-//       if (!worksheet) {
-//         return NextResponse.json({ error: "Worksheet not found" }, { status: 404 });
-//       }
-
-//       return NextResponse.json({ worksheet, message: "Worksheet Created" }, { status: 201 });
-//     } else {
-//       return NextResponse.json({ error: "Permission Denied !!" }, { status: 500 });
-//     }
-//   } catch (error) {
-//     return NextResponse.json({ error: error }, { status: 500 });
-//   }
-// }
-
-// export async function GET(request: NextRequest) {
-//   const sectionId = request.nextUrl.searchParams.get("sectionId");
-//   const chapterId = request.nextUrl.searchParams.get("chapterId");
-//   const worksheetId = request.nextUrl.searchParams.get("worksheetId");
-
-//   await connectMongoDb();
-//   if (sectionId) {
-//     try {
-//       const worksheets: Worksheet[] = await WorkSheetModel.find({
-//         sectionId: sectionId,
-//       });
-
-//       if (worksheets.length > 0) {
-//         return NextResponse.json({ worksheets }, { status: 200 });
-//       } else {
-//         return NextResponse.json({ error: "No worksheets found" }, { status: 404 });
-//       }
-//     } catch (error) {
-//       console.error("Error in GET request:", error);
-//       return NextResponse.json({ error: "An error occurred" }, { status: 500 });
-//     }
-//   }
-//   if (chapterId) {
-//     try {
-//       const worksheets = await WorkSheetModel.find({
-//         chapterId: chapterId,
-//       }).lean();
-//       if (worksheets) {
-//         return NextResponse.json({ worksheets }, { status: 200 });
-//       } else {
-//         return NextResponse.json({ error: "No worksheets found" }, { status: 404 });
-//       }
-//     } catch {
-//       return NextResponse.json({ error: "An error occurred" }, { status: 500 });
-//     }
-//   }
-//   if (worksheetId) {
-//     try {
-//       const worksheet = await WorkSheetModel.findById(worksheetId).lean();
-//       return NextResponse.json({ ...worksheet }, { status: 200 });
-//     } catch {
-//       return NextResponse.json({ error: "An Error Occured" }, { status: 500 });
-//     }
-//   }
-// }

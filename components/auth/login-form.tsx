@@ -10,7 +10,6 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 
-import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
@@ -30,13 +29,6 @@ import { login } from "@/actions/login";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const LoginForm = ({ className, ...props }: UserAuthFormProps) => {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
-  const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Email already in use with different provider!"
-      : "";
-
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -53,7 +45,7 @@ const LoginForm = ({ className, ...props }: UserAuthFormProps) => {
     setError("");
     setSuccess("");
     startTransition(() => {
-      login(values, callbackUrl)
+      login(values)
         .then((data) => {
           if (data?.error) {
             form.reset();
@@ -99,9 +91,19 @@ const LoginForm = ({ className, ...props }: UserAuthFormProps) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="******" type="password" />
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="******"
+                      type="password"
+                    />
                   </FormControl>
-                  <Button size="sm" variant="link" asChild className="px-0 font-normal">
+                  <Button
+                    size="sm"
+                    variant="link"
+                    asChild
+                    className="px-0 font-normal"
+                  >
                     <Link href="/auth/reset">Forgot password?</Link>
                   </Button>
                   <FormMessage />
@@ -109,7 +111,7 @@ const LoginForm = ({ className, ...props }: UserAuthFormProps) => {
               )}
             />
           </div>
-          <FormError message={error || urlError} />
+          <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
             Login

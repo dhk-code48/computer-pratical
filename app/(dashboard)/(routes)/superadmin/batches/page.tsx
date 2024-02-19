@@ -12,23 +12,20 @@ const GradePage = async () => {
     return redirect("/");
   }
 
-  const grades = await db.grade.findMany({
+  const batchs = await db.batch.findMany({
     orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      sections: true,
+      createdAt: "asc",
     },
   });
   return (
     <>
-      <div className="prose">
-        <h2 className="mb-0 text-2xl font-bold">Grade Management</h2>
+      <div>
+        <h2 className="mb-0 text-2xl font-bold">Batch Management</h2>
         <p className="text-gray-500 text-sm font-semibold">
-          View and Manage grades Info&apos;s
+          View and Manage batchs Info&apos;s
         </p>
       </div>
-      <DataTable columns={columns} data={grades} />
+      <DataTable columns={columns} data={batchs} />
     </>
   );
 };

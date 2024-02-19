@@ -50,6 +50,10 @@ const WorksheetFrom = ({
 
   const [file, setFile] = useState<File | null>(null);
 
+  const pdfLink = worksheet
+    ? "http://129.150.50.164:3002/pdf/" + worksheet.id + ".pdf"
+    : "";
+
   async function onSubmit(values: z.infer<typeof WorksheetSchema>) {
     try {
       setError("");
@@ -64,7 +68,9 @@ const WorksheetFrom = ({
       data.append("published", JSON.stringify(values.published));
       data.append("worksheetId", (worksheet && worksheet.id) || "");
 
-      const newWorkSheet = worksheet ? await updateWorksheet(data) : await createWorksheet(data);
+      const newWorkSheet = worksheet
+        ? await updateWorksheet(data)
+        : await createWorksheet(data);
 
       console.log("newWorkSheet = > ", newWorkSheet);
 
@@ -77,7 +83,9 @@ const WorksheetFrom = ({
           ? window.location.assign(
               `/teacher/sections/${sectionId}/chapter/${chapterId}/worksheet/${worksheet.id}`
             )
-          : window.location.assign(`/teacher/sections/${sectionId}/chapter/${chapterId}`);
+          : window.location.assign(
+              `/teacher/sections/${sectionId}/chapter/${chapterId}`
+            );
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -134,7 +142,12 @@ const WorksheetFrom = ({
                 <FormItem>
                   <FormLabel>Label</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="12" type="text" />
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="12"
+                      type="text"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,7 +172,8 @@ const WorksheetFrom = ({
                     />
                   </FormControl>
                   <p className="italic">
-                    Note: Unpublishing Worksheet will delete students grades/progress on worksheet
+                    Note: Unpublishing Worksheet will delete students
+                    grades/progress on worksheet
                   </p>
                   <FormMessage />
                 </FormItem>
@@ -173,6 +187,16 @@ const WorksheetFrom = ({
           </Button>
         </form>
       </Form>
+      {worksheet && (
+        <>
+          <p>Current Worksheet</p>
+          <object
+            type="application/pdf"
+            data={pdfLink}
+            className="w-full h-[300px]"
+          ></object>
+        </>
+      )}
     </div>
   );
 };

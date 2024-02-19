@@ -17,6 +17,25 @@ const SectionAnalytics: FC<{
   if (!userId) {
     redirect("/auth/login");
   }
+  const totalWorksheet = await db.workSheet.count({
+    where: {
+      teacherId: userId,
+      chapter: {
+        sectionId,
+      },
+    },
+  });
+
+  const totalPublishedWorksheet = await db.workSheet.count({
+    where: {
+      teacherId: userId,
+      published: true,
+      chapter: {
+        sectionId,
+      },
+    },
+  });
+
   //   const totalWorksheet = await db.workSheet.findMany({
   //     where: {
   //       teacherId: userId,
@@ -27,8 +46,16 @@ const SectionAnalytics: FC<{
   //   });
   return (
     <div className="flex gap-x-10 gap-y-5 items-center justify-start">
-      <InfoCard title="Total Chapters" value={totalChapters.toString()} />
-      {/* <InfoCard title="Total Worksheets" value={totalWorksheet.toString()} /> */}
+      <InfoCard title="Chapters" value={totalChapters.toString()} />
+      <InfoCard title="Worksheets" value={totalWorksheet.toString()} />
+      <InfoCard
+        title="Published Worksheets"
+        value={totalPublishedWorksheet.toString()}
+        description={
+          "Total Unpublished Worksheets is " +
+          (totalWorksheet - totalPublishedWorksheet)
+        }
+      />
     </div>
   );
 };

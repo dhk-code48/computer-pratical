@@ -35,10 +35,14 @@
     "react-dom": "^18",
     "react-hook-form": "^7.49.3",
     "react-select": "^5.8.0",
+    "read-excel-file": "^5.7.1",
     "recharts": "^2.11.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
+    "uuid": "^9.0.1",
+    "write-excel-file": "^1.4.29",
+    "zod": "^3.22.4",
+    "zustand": "^4.5.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -46,6 +50,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",

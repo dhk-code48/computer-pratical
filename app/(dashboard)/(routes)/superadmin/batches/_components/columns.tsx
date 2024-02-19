@@ -1,6 +1,6 @@
 "use client";
 
-import { Chapter, User, WorkSheet } from "@prisma/client";
+import { Grade } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -12,11 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { deleteGrade } from "@/actions/deleteGrade";
 import { startTransition } from "react";
-import { deleteWorksheet } from "@/actions/deleteWorksheet";
+import { deleteBatch } from "@/actions/deleteBatch";
 
-export const columns: ColumnDef<WorkSheet>[] = [
+export const columns: ColumnDef<Grade>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -25,81 +25,53 @@ export const columns: ColumnDef<WorkSheet>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Worksheet Name
+          Year
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "published",
+    accessorKey: "isActive",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Is Published
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "chapterId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chapter Id
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "chapter",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chapter Name
+          Active Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const chapter: Chapter = row.getValue("chapter");
-      return <div>{chapter.name}</div>;
+      const isActive: boolean = row.getValue("isActive");
+      return <div>{JSON.stringify(isActive).toUpperCase()}</div>;
     },
-  },
-  {
-    id: "title",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const { id: worksheetId } = row.original;
+      const { id } = row.original;
+      console.log("Id", id);
+
       const ondelete = () => {
         startTransition(() => {
-          confirm("Do You want to delete this worksheet") &&
-            deleteWorksheet(worksheetId)
+          confirm("Do You want to delete batch") &&
+            deleteBatch(id)
               .then((data) => {
                 if (data?.error) {
-                  alert("ERROR WHILE DELETING");
+                  alert(data.error);
                 }
 
                 if (data?.success) {
-                  window.location.assign(window.location.pathname);
+                  window.location.assign("/superadmin/batches");
                 }
               })
               .catch(() => alert("ERROR WHILE DELETING"));
         });
       };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -109,7 +81,7 @@ export const columns: ColumnDef<WorkSheet>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={window.location.pathname + "/worksheet/" + worksheetId}>
+            <Link href={`/superadmin/batches/${id}`}>
               <DropdownMenuItem>
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit

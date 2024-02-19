@@ -16,18 +16,33 @@ enum UserRole {
   SUPERADMIN
 }
 
+model Batch {
+  id        String   @id @default(uuid())
+  name      String
+  users     User[]
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
-  id            String            @id @default(cuid())
-  name          String?
-  email         String?           @unique
-  emailVerified DateTime?
-  password      String?
-  role          UserRole          @default(STUDENT)
-  image         String?
-  sections      Section[]
-  accounts      Account[]
-  worksheets    WorkSheet[]
-  progress      StudentProgress[]
+  id                 String            @id @default(cuid())
+  name               String?
+  email              String?           @unique
+  emailVerified      DateTime?
+  password           String?
+  role               UserRole          @default(STUDENT)
+  regestrationNumber String?
+  image              String?
+  batchId            String?
+  batch              Batch?            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  sections           Section[]
+  accounts           Account[]
+  worksheets         WorkSheet[]
+  progress           StudentProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
@@ -45,6 +60,9 @@ model Account {
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
 }

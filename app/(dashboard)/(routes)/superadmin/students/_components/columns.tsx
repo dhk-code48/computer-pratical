@@ -1,6 +1,6 @@
 "use client";
 
-import { Chapter, User, WorkSheet } from "@prisma/client";
+import { User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -12,11 +12,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
 import { startTransition } from "react";
-import { deleteWorksheet } from "@/actions/deleteWorksheet";
+import { deleteTeacher } from "@/actions/deleteTeacher";
+import { deleteStudent } from "@/actions/deletStudent";
 
-export const columns: ColumnDef<WorkSheet>[] = [
+export const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: "regestrationNumber",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Reg. No.
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -25,69 +39,35 @@ export const columns: ColumnDef<WorkSheet>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Worksheet Name
+          Student Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "published",
+    accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Is Published
+          Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
-  {
-    accessorKey: "chapterId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chapter Id
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "chapter",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chapter Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const chapter: Chapter = row.getValue("chapter");
-      return <div>{chapter.name}</div>;
-    },
-  },
-  {
-    id: "title",
-  },
+
   {
     id: "actions",
     cell: ({ row }) => {
-      const { id: worksheetId } = row.original;
+      const { id } = row.original;
       const ondelete = () => {
         startTransition(() => {
-          confirm("Do You want to delete this worksheet") &&
-            deleteWorksheet(worksheetId)
+          confirm("Deleting student info will aslo delete student progress") &&
+            deleteStudent(id)
               .then((data) => {
                 if (data?.error) {
                   alert("ERROR WHILE DELETING");
@@ -100,6 +80,7 @@ export const columns: ColumnDef<WorkSheet>[] = [
               .catch(() => alert("ERROR WHILE DELETING"));
         });
       };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -109,7 +90,7 @@ export const columns: ColumnDef<WorkSheet>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={window.location.pathname + "/worksheet/" + worksheetId}>
+            <Link href={`/superadmin/students/${id}`}>
               <DropdownMenuItem>
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit

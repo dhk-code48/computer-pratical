@@ -21,9 +21,15 @@ const SuperAdminTeachersPage = async () => {
     },
   });
   return (
-    <div className="p-6">
+    <>
+      <div className="prose">
+        <h2 className="mb-0 text-2xl font-bold">Teacher Management</h2>
+        <p className="text-gray-500 text-sm font-semibold">
+          View and Manage teachers Info&apos;s
+        </p>
+      </div>
       <DataTable columns={columns} data={teachers} />
-    </div>
+    </>
   );
 };
 

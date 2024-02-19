@@ -11,7 +11,10 @@ export const ResetSchema = z.object({
     message: "Email is required",
   }),
 });
-
+export const BatchSchema = z.object({
+  name: z.string().min(1),
+  isActive: z.boolean(),
+});
 export const LoginSchema = z.object({
   email: z.string().email({
     message: "Email is required",
@@ -42,6 +45,20 @@ export const WorksheetSchema = z.object({
 });
 
 export const TeacherSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  password: z.string().min(6, {
+    message: "Minimum 6 characters required",
+  }),
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+  sections: z.array(z.string().min(1)).min(1, {
+    message: "Minimun of 1 section required",
+  }),
+});
+export const StudentSchema = z.object({
   email: z.string().email({
     message: "Email is required",
   }),

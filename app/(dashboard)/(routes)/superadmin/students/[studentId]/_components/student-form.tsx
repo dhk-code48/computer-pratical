@@ -14,10 +14,11 @@ import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "react-select";
 
-import { TeacherSchema } from "@/schemas";
+import { StudentSchema } from "@/schemas";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,43 +28,42 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
 import { Grade, Section, User, UserRole } from "@prisma/client";
-import { createTeacher } from "@/actions/createTeacher";
-import { updateTeacher } from "@/actions/updateTeacher";
+import { createStudent } from "@/actions/createStudent";
+import { updateStudent } from "@/actions/updateStudent";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   grades: { name: string; sections: Section[] }[];
-  teacherId: string;
-  teacher: (User & { sections: Section[] }) | null;
+  studentId: string;
+  student: (User & { sections: Section[] }) | null;
 }
-
 const TeacherForm = ({
   className,
   grades,
-  teacher,
-  teacherId,
+  student,
+  studentId,
   ...props
 }: UserAuthFormProps) => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof TeacherSchema>>({
-    resolver: zodResolver(TeacherSchema),
+  const form = useForm<z.infer<typeof StudentSchema>>({
+    resolver: zodResolver(StudentSchema),
     defaultValues: {
-      email: (teacher && teacher.email) || "",
+      email: (student && student.email) || "",
       password: "",
       sections: [""],
-      name: (teacher && teacher.name) || "",
+      name: (student && student.name) || "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof TeacherSchema>) => {
+  const onSubmit = (values: z.infer<typeof StudentSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      teacher &&
-        updateTeacher(values, teacherId)
+      student &&
+        updateStudent(values, studentId)
           .then((data) => {
             if (data?.error) {
               form.reset();
@@ -72,13 +72,13 @@ const TeacherForm = ({
             if (data?.success) {
               form.reset();
               setSuccess(data.success);
-              window.location.assign("/superadmin/teachers");
+              window.location.assign("/superadmin/students" + studentId);
             }
           })
           .catch(() => setError("Something went wrong"));
 
-      !teacher &&
-        createTeacher(values)
+      !student &&
+        createStudent(values)
           .then((data) => {
             if (data?.error) {
               form.reset();
@@ -87,7 +87,7 @@ const TeacherForm = ({
             if (data?.success) {
               form.reset();
               setSuccess(data.success);
-              window.location.assign("/superadmin/teachers");
+              window.location.assign("/superadmin/students");
             }
           })
           .catch(() => setError("Something went wrong"));
@@ -184,6 +184,10 @@ const TeacherForm = ({
                       }
                     />
                   </FormControl>
+                  <FormDescription>
+                    Please Select Only One Section For Student Note :
+                    Assignining Mutiple section might crash the program
+                  </FormDescription>
                 </FormItem>
               )}
             />
@@ -191,7 +195,7 @@ const TeacherForm = ({
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create Teacher
+            Add Student
           </Button>
         </form>
       </Form>

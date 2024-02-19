@@ -5,8 +5,11 @@ import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { FC } from "react";
 
-const StudentWorkSheetPage: FC<{ params: { worksheetId: string } }> = ({ params }) => {
-  const pdfLink = "http://localhost:3000/pdf/" + params.worksheetId + ".pdf";
+const StudentWorkSheetPage: FC<{ params: { worksheetId: string } }> = ({
+  params,
+}) => {
+  const pdfLink =
+    "http://129.150.50.164:3002/pdf/" + params.worksheetId + ".pdf";
   const router = useRouter();
   return (
     <div className="p-6 space-y-10">

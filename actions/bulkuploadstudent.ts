@@ -11,10 +11,18 @@ export const createBulkStudent = async (rows: Row[], sectionId: string) => {
       const name = data[1].toString();
       const email = data[2].toString();
       const nonHashedpassword = data[3].toString();
+      const publishedWorksheets = await db.workSheet.findMany({
+        where: {
+          chapter: {
+            sectionId: sectionId,
+          },
+          published: true,
+        },
+      });
       const password = await bcrypt.hash(nonHashedpassword, 12);
 
-      i !== 0 &&
-        (await db.user.create({
+      if (i !== 0) {
+        const user = await db.user.create({
           data: {
             name,
             regestrationNumber,
@@ -25,7 +33,16 @@ export const createBulkStudent = async (rows: Row[], sectionId: string) => {
               connect: { id: sectionId },
             },
           },
+        });
+        const studentProgressData = publishedWorksheets.map((worksheet) => ({
+          userId: user.id,
+          worksheetId: worksheet.id,
+          grading: "N",
         }));
+        await db.studentProgress.createMany({
+          data: studentProgressData,
+        });
+      }
     });
   } catch (error) {
     return { error: "Something went wrong" };

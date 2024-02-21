@@ -18,6 +18,7 @@ import { TeacherSchema } from "@/schemas";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,7 +34,7 @@ import { updateTeacher } from "@/actions/updateTeacher";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   grades: { name: string; sections: Section[] }[];
   teacherId: string;
-  teacher: (User & { sections: Section[] }) | null;
+  teacher: (User & { sections: (Section & { grade: Grade })[] }) | null;
 }
 
 const TeacherForm = ({
@@ -184,6 +185,14 @@ const TeacherForm = ({
                       }
                     />
                   </FormControl>
+                  {teacher && (
+                    <FormDescription>
+                      Previously Assigned Sections{" "}
+                      {teacher.sections.map(
+                        (section) => section.grade.name + " " + section.name
+                      )}
+                    </FormDescription>
+                  )}
                 </FormItem>
               )}
             />
@@ -191,7 +200,7 @@ const TeacherForm = ({
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create Teacher
+            {teacher ? "Update Teacher" : "Create Teacher"}
           </Button>
         </form>
       </Form>

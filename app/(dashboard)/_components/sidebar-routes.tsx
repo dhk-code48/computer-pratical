@@ -56,11 +56,6 @@ const superAdminRoutes = [
     label: "Students",
     href: "/superadmin/students",
   },
-  {
-    icon: Calendar,
-    label: "Batch",
-    href: "/superadmin/batches",
-  },
 ];
 
 export const SidebarRoutes = () => {
